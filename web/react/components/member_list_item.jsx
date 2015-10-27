@@ -109,7 +109,7 @@ export default class MemberListItem extends React.Component {
                     height='36'
                     width='36'
                 />
-                <span className='member-name'>{member.username}</span>
+                <span className='member-name'>{Utils.getDisplayName(member)}</span>
                 <span className='member-email'>{member.email}</span>
                 {invite}
             </div>
