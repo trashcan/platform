@@ -4,6 +4,7 @@
 var UserStore = require('../stores/user_store.jsx');
 var Popover = ReactBootstrap.Popover;
 var OverlayTrigger = ReactBootstrap.OverlayTrigger;
+var Utils = require('../utils/utils.jsx');
 
 export default class PopoverListMembers extends React.Component {
     componentDidMount() {
@@ -46,7 +47,7 @@ export default class PopoverListMembers extends React.Component {
                             className='text--nowrap'
                             key={'popover-member-' + i}
                         >
-                            {m.username}
+                            {Utils.getDisplayName(m)}
                         </div>
                     );
                     count++;
