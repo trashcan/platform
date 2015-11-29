@@ -10,8 +10,11 @@ import * as Utils from '../utils/utils.jsx';
 
 const patterns = new Map([
     ['channels', /\b(?:in|channel):\s*(\S*)$/i],
-    ['users', /\bfrom:\s*(\S*)$/i]
+    ['users', /\bfrom:\s*(\S*)$/i],
+    ['emoji', /\b:\s*(\S*)$/i]
 ]);
+
+const emojiList = [ ":ice_cream:", ":happy:" ];
 
 export default class EmojiAutocomplete extends React.Component {
     constructor(props) {
@@ -35,7 +38,7 @@ export default class EmojiAutocomplete extends React.Component {
             mode: '',
             filter: '',
             selection: 0,
-            suggestions: new Map()
+            suggestions: emojiList
         };
     }
 
@@ -44,7 +47,7 @@ export default class EmojiAutocomplete extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const content = $(ReactDOM.findDOMNode(this.refs.searchPopover)).find('.popover-content');
+        const content = $(ReactDOM.findDOMNode(this.refs.emojiPopover)).find('.popover-content');
 
         if (this.state.show && this.state.suggestions.length > 0) {
             if (!prevState.show) {
@@ -66,7 +69,7 @@ export default class EmojiAutocomplete extends React.Component {
     }
 
     handleDocumentClick(e) {
-        const container = $(ReactDOM.findDOMNode(this.refs.searchPopover));
+        const container = $(ReactDOM.findDOMNode(this.refs.emojiPopover));
 
         if (!(container.is(e.target) || container.has(e.target).length > 0)) {
             this.setState({
@@ -157,7 +160,7 @@ export default class EmojiAutocomplete extends React.Component {
     }
 
     scrollToItem(itemName) {
-        const content = $(ReactDOM.findDOMNode(this.refs.searchPopover)).find('.popover-content');
+        const content = $(ReactDOM.findDOMNode(this.refs.emojiPopover)).find('.popover-content');
         const visibleContentHeight = content[0].clientHeight;
         const actualContentHeight = content[0].scrollHeight;
 
@@ -182,8 +185,12 @@ export default class EmojiAutocomplete extends React.Component {
 
     updateSuggestions(mode, filter) {
         let suggestions = [];
+        console.log("ac: mode is: " + mode);
+        console.log("ac: filter is: " + filter);
 
-        if (mode === 'channels') {
+        suggestions = ["hello", "world"];
+
+        /*if (mode === 'channels') {
             let channels = ChannelStore.getAll();
 
             if (filter) {
@@ -215,7 +222,9 @@ export default class EmojiAutocomplete extends React.Component {
             users.sort((a, b) => a.username.localeCompare(b.username));
 
             suggestions = users;
-        }
+        } else if (mode === 'emoji') {
+            suggestions = ["hello", "world"]
+        }*/
 
         let selection = this.state.selection;
 
@@ -326,7 +335,7 @@ export default class EmojiAutocomplete extends React.Component {
 
         return (
             <Popover
-                ref='searchPopover'
+                ref='emojiPopover'
                 onShow={this.componentDidMount}
                 id='search-autocomplete__popover'
                 className='search-help-popover autocomplete visible'
