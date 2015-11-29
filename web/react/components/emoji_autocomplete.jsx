@@ -14,7 +14,7 @@ const patterns = new Map([
     ['emoji', /:(\w+)/i]
 ]);
 
-const emojiList = [ ":ice_cream:", ":happy:" ];
+const emojiList = [ "ice_cream", "happy" ];
 
 export default class EmojiAutocomplete extends React.Component {
     constructor(props) {
@@ -32,13 +32,14 @@ export default class EmojiAutocomplete extends React.Component {
 
         this.renderChannelSuggestion = this.renderChannelSuggestion.bind(this);
         this.renderUserSuggestion = this.renderUserSuggestion.bind(this);
+        this.renderEmojiSuggestion = this.renderEmojiSuggestion.bind(this);
 
         this.state = {
             show: false,
             mode: '',
             filter: '',
             selection: 0,
-            suggestions: emojiList
+            suggestions: []
         };
     }
 
@@ -188,10 +189,7 @@ export default class EmojiAutocomplete extends React.Component {
     updateSuggestions(mode, filter) {
         let suggestions = [];
         console.log("ac: mode is: " + mode);
-        console.log("ac: filter is: " + filter);
-
-        //suggestions = ["hello", "world"];
-    
+        console.log("ac: filter is: " + filter);    
 
         if (mode === 'channels') {
             let channels = ChannelStore.getAll();
@@ -226,8 +224,26 @@ export default class EmojiAutocomplete extends React.Component {
 
             suggestions = users;
         } else if (mode === 'emoji') {
-            let suggestion = { "name": "hello"}; 
-            suggestions = [suggestion];
+            //let suggestion = { "name": "hello"}; 
+            //suggestions = [suggestion];
+            let suggestion = {'key': 'ice_cream',
+                ref: 'ice_cream',
+                name: ':ice_cream:',
+                href: '/static/images/emoji/ice_cream.png'
+            }
+            suggestions.push(suggestion);    
+                         
+            /*suggestions.push(
+                <div
+                    key="icecream"
+                    ref="icecream"
+                    onClick=""
+                    className="emoji"
+                >
+                    :ice_cream:
+                </div>
+            );*/
+            
         }
 
         let selection = this.state.selection;
@@ -299,6 +315,29 @@ export default class EmojiAutocomplete extends React.Component {
             </div>
         );
     }
+    
+   renderEmojiSuggestion(emoji) {
+        let className = 'search-autocomplete__item';
+        /*if (user.username === this.getSelection()) {
+            className += ' selected';
+        }*/
+
+        return (
+            <div
+                key="mykey"
+                ref={emoji.ref}
+                onClick="nothing"
+                className={className}
+            >
+                <img
+                    className='emoji'
+                    src={emoji.href}
+                />
+                {emoji.name}
+            </div>
+        );
+    }
+    
 
     render() {
         if (!this.state.show || this.state.suggestions.length === 0) {
@@ -335,6 +374,9 @@ export default class EmojiAutocomplete extends React.Component {
             }
         } else if (this.state.mode === 'users') {
             suggestions = this.state.suggestions.map(this.renderUserSuggestion);
+        } else if (this.state.mode === 'emoji') {
+            console.log(this.state.suggestions);
+            suggestions = this.state.suggestions.map(this.renderEmojiSuggestion);
         }
 
         return (
