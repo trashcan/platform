@@ -11,7 +11,7 @@ import * as Utils from '../utils/utils.jsx';
 const patterns = new Map([
     ['channels', /\b(?:in|channel):\s*(\S*)$/i],
     ['users', /\bfrom:\s*(\S*)$/i],
-    ['emoji', /\b:\s*(\S*)$/i]
+    ['emoji', /:(\w+)/i]
 ]);
 
 const emojiList = [ ":ice_cream:", ":happy:" ];
@@ -85,6 +85,7 @@ export default class EmojiAutocomplete extends React.Component {
 
         let mode = '';
         let filter = '';
+        
         for (const [modeForPattern, pattern] of patterns) {
             const result = pattern.exec(preText);
 
@@ -94,9 +95,10 @@ export default class EmojiAutocomplete extends React.Component {
                 break;
             }
         }
+        console.log("Mode is: " + mode);
+        console.log("filter is" + filter);
 
         if (mode !== this.state.mode || filter !== this.state.filter) {
-
             this.updateSuggestions(mode, filter);
         }
 
@@ -188,9 +190,10 @@ export default class EmojiAutocomplete extends React.Component {
         console.log("ac: mode is: " + mode);
         console.log("ac: filter is: " + filter);
 
-        suggestions = ["hello", "world"];
+        //suggestions = ["hello", "world"];
+    
 
-        /*if (mode === 'channels') {
+        if (mode === 'channels') {
             let channels = ChannelStore.getAll();
 
             if (filter) {
@@ -223,8 +226,9 @@ export default class EmojiAutocomplete extends React.Component {
 
             suggestions = users;
         } else if (mode === 'emoji') {
-            suggestions = ["hello", "world"]
-        }*/
+            let suggestion = { "name": "hello"}; 
+            suggestions = [suggestion];
+        }
 
         let selection = this.state.selection;
 
