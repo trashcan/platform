@@ -9,6 +9,7 @@ import ErrorStore from '../stores/error_store.jsx';
 import * as TextFormatting from '../utils/text_formatting.jsx';
 import * as Utils from '../utils/utils.jsx';
 import Constants from '../utils/constants.jsx';
+import EmojiAutocomplete from './emoji_autocomplete.jsx';
 const ActionTypes = Constants.ActionTypes;
 const KeyCodes = Constants.KeyCodes;
 
@@ -16,20 +17,23 @@ export default class Textbox extends React.Component {
     constructor(props) {
         super(props);
 
-        this.getStateFromStores = this.getStateFromStores.bind(this);
         this.onListenerChange = this.onListenerChange.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.handleFocus = this.handleFocus.bind(this);
+        this.handleBlur = this.handleBlur.bind(this);
+        this.getStateFromStores = this.getStateFromStores.bind(this);
+
         this.onRecievedError = this.onRecievedError.bind(this);
         this.updateMentionTab = this.updateMentionTab.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleKeyPress = this.handleKeyPress.bind(this);
-        this.handleKeyDown = this.handleKeyDown.bind(this);
+
         this.handleBackspace = this.handleBackspace.bind(this);
         this.checkForNewMention = this.checkForNewMention.bind(this);
         this.addMention = this.addMention.bind(this);
         this.addCommand = this.addCommand.bind(this);
         this.resize = this.resize.bind(this);
-        this.handleFocus = this.handleFocus.bind(this);
-        this.handleBlur = this.handleBlur.bind(this);
+
         this.handlePaste = this.handlePaste.bind(this);
         this.showPreview = this.showPreview.bind(this);
 
@@ -54,6 +58,24 @@ export default class Textbox extends React.Component {
 
         return {message: null};
     }
+
+completeWord(partialWord, word) {
+        const textbox = ReactDOM.findDOMNode(this.refs.search);
+        let text = textbox.value;
+
+        const caret = utils.getCaretPosition(textbox);
+        const preText = text.substring(0, caret - partialWord.length);
+        const postText = text.substring(caret);
+        text = preText + word + postText;
+
+        textbox.value = text;
+        utils.setCaretPosition(textbox, preText.length + word.length);
+
+        SearchStore.storeSearchTerm(text);
+        SearchStore.emitSearchTermChange(false);
+        this.setState({searchTerm: text});
+}
+
 
     componentDidMount() {
         SearchStore.addAddMentionListener(this.onListenerChange);
@@ -119,8 +141,12 @@ export default class Textbox extends React.Component {
         }, 1);
     }
 
-    handleChange() {
+    handleChange(e) {
+        console.log("t: handleChange")
+        var term = e.target.value;
+        //console.log(e);
         const text = ReactDOM.findDOMNode(this.refs.message).value;
+        this.refs.emojiautocomplete.handleInputChange(e.target, term);
         this.props.onUserInput(text);
     }
 
@@ -334,6 +360,10 @@ export default class Textbox extends React.Component {
                     onBlur={this.handleBlur}
                     onPaste={this.handlePaste}
                     style={{visibility: this.state.preview ? 'hidden' : 'visible'}}
+                />
+                <EmojiAutocomplete
+                    ref='emojiautocomplete'
+                    completeWord={this.completeWord}
                 />
                 <div
                     ref='preview'
