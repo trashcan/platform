@@ -7,6 +7,7 @@ const KeyCodes = Constants.KeyCodes;
 const Popover = ReactBootstrap.Popover;
 import UserStore from '../stores/user_store.jsx';
 import * as Utils from '../utils/utils.jsx';
+import * as Emoticons from '../utils/emoticons.jsx';
 
 const patterns = new Map([
     ['channels', /\b(?:in|channel):\s*(\S*)$/i],
@@ -15,6 +16,10 @@ const patterns = new Map([
 ]);
 
 const emojiList = [ "ice_cream", "happy" ];
+
+var MAX_HEIGHT_LIST = 292;
+var MAX_ITEMS_IN_LIST = 25;
+var ITEM_HEIGHT = 36;
 
 export default class EmojiAutocomplete extends React.Component {
     constructor(props) {
@@ -187,9 +192,15 @@ export default class EmojiAutocomplete extends React.Component {
     }
 
     updateSuggestions(mode, filter) {
+        //console.log(Emoticons);
+        //console.log(Emoticons.initializeEmoticonMap() );
+        //console.log(Emoticons.emoticonMap);
+        //console.log(Emoticons.emoticonMap
+        
         let suggestions = [];
         console.log("ac: mode is: " + mode);
-        console.log("ac: filter is: " + filter);    
+        console.log("ac: filter is: " + filter); 
+
 
         if (mode === 'channels') {
             let channels = ChannelStore.getAll();
@@ -224,26 +235,23 @@ export default class EmojiAutocomplete extends React.Component {
 
             suggestions = users;
         } else if (mode === 'emoji') {
-            //let suggestion = { "name": "hello"}; 
-            //suggestions = [suggestion];
-            let suggestion = {'key': 'ice_cream',
+            suggestions.push({'key': 'alien',
+                ref: ':alien:',
+                name: ':alien:',
+                href: '/static/images/emoji/alien.png'
+            }); 
+            
+            suggestions.push({'key': 'ice_cream',
                 ref: 'ice_cream',
                 name: ':ice_cream:',
                 href: '/static/images/emoji/ice_cream.png'
-            }
-            suggestions.push(suggestion);    
-                         
-            /*suggestions.push(
-                <div
-                    key="icecream"
-                    ref="icecream"
-                    onClick=""
-                    className="emoji"
-                >
-                    :ice_cream:
-                </div>
-            );*/
-            
+            });    
+
+            suggestions.push({'key': 'thumbsup',
+                ref: ':thumbsup:',
+                name: ':thumbsup:',
+                href: '/static/images/emoji/thumbsup.png'
+            }); 
         }
 
         let selection = this.state.selection;
@@ -321,18 +329,17 @@ export default class EmojiAutocomplete extends React.Component {
         /*if (user.username === this.getSelection()) {
             className += ' selected';
         }*/
-
+        // TODO: onclick
         return (
             <div
-                key="mykey"
+                key={emoji.key}
                 ref={emoji.ref}
-                onClick="nothing"
-                className={className}
+                className={className + " mentions-name"}
             >
                 <img
                     className='emoji'
                     src={emoji.href}
-                />
+                />&nbsp;
                 {emoji.name}
             </div>
         );
@@ -379,17 +386,45 @@ export default class EmojiAutocomplete extends React.Component {
             suggestions = this.state.suggestions.map(this.renderEmojiSuggestion);
         }
 
-        return (
+        //var $mentionTab = $('#' + this.props.id);
+        //var maxHeight = Math.min(MAX_HEIGHT_LIST, $mentionTab.offset().top - 10);
+        var $postbox = $('#post_textbox');
+        
+        var maxHeight = MAX_HEIGHT_LIST;
+        var style = {
+            height: Math.min(maxHeight, (suggestions.length * ITEM_HEIGHT) + 4),
+            width: $postbox.parent().width(),
+            bottom:  $(window).height() - $postbox.offset().top - ITEM_HEIGHT
+            //bottom: $(window).height() - $mentionTab.offset().top,
+            //left: $mentionTab.offset().left
+        };
+        
+        return(
+            <div
+                className='mentions--top'
+                style={style}
+            >
+                <div
+                    ref='emojiPopover'
+                    className='mentions-box'
+                    id='emoji-autocomplete__popover'
+                >
+                    {suggestions}
+                </div>
+            </div>
+          );
+        /*return (
+        
             <Popover
                 ref='emojiPopover'
                 onShow={this.componentDidMount}
-                id='search-autocomplete__popover'
-                className='search-help-popover autocomplete visible'
+                id='emoji-autocomplete__popover'
+                className='mentions-box mentions--top autocomplete visible'
                 placement='top'
             >
                 {suggestions}
             </Popover>
-        );
+        );*/
     }
 }
 

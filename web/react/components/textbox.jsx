@@ -10,6 +10,8 @@ import * as TextFormatting from '../utils/text_formatting.jsx';
 import * as Utils from '../utils/utils.jsx';
 import Constants from '../utils/constants.jsx';
 import EmojiAutocomplete from './emoji_autocomplete.jsx';
+
+
 const ActionTypes = Constants.ActionTypes;
 const KeyCodes = Constants.KeyCodes;
 
@@ -81,6 +83,9 @@ completeWord(partialWord, word) {
         SearchStore.addAddMentionListener(this.onListenerChange);
         ErrorStore.addChangeListener(this.onRecievedError);
 
+        
+
+
         this.resize();
         this.updateMentionTab(null);
     }
@@ -142,10 +147,8 @@ completeWord(partialWord, word) {
     }
 
     handleChange(e) {
-        console.log("t: handleChange")
-        var term = e.target.value;
-        //console.log(e);
         const text = ReactDOM.findDOMNode(this.refs.message).value;
+        var term = e.target.value;
         this.refs.emojiautocomplete.handleInputChange(e.target, term);
         this.props.onUserInput(text);
     }

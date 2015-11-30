@@ -1,7 +1,7 @@
 // Copyright (c) 2015 Mattermost, Inc. All Rights Reserved.
 // See License.txt for license information.
 
-const emoticonPatterns = {
+export const emoticonPatterns = {
     smile: /(^|\s)(:-?\))(?=$|\s)/g, // :)
     wink: /(^|\s)(;-?\))(?=$|\s)/g, // ;)
     open_mouth: /(^|\s)(:o)(?=$|\s)/gi, // :o
@@ -25,7 +25,7 @@ const emoticonPatterns = {
     thumbsdown: /(^|\s)(:\-1:)(?=$|\s)/g // :-1:
 };
 
-function initializeEmoticonMap() {
+export function initializeEmoticonMap() {
     const emoticonNames =
         ('+1,-1,100,1234,8ball,a,ab,abc,abcd,accept,aerial_tramway,airplane,alarm_clock,alien,ambulance,anchor,angel,' +
         'anger,angry,anguished,ant,apple,aquarius,aries,arrow_backward,arrow_double_down,arrow_double_up,arrow_down,' +
