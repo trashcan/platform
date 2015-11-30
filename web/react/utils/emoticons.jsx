@@ -25,8 +25,23 @@ export const emoticonPatterns = {
     thumbsdown: /(^|\s)(:\-1:)(?=$|\s)/g // :-1:
 };
 
+var emoticonNames = {}
+
+export function search(key) {
+    console.log("Searching for emoticon: " + key);
+    let results = [];
+    for (let i = 0; i < emoticonNames.length; i++) {
+        if (emoticonNames[i].indexOf(key) > -1) {
+            console.log("Found a match:" + emoticonNames[i]);
+            results.push(emoticonNames[i]);
+        }
+    }
+
+    return results;
+} 
+ 
 export function initializeEmoticonMap() {
-    const emoticonNames =
+    emoticonNames =
         ('+1,-1,100,1234,8ball,a,ab,abc,abcd,accept,aerial_tramway,airplane,alarm_clock,alien,ambulance,anchor,angel,' +
         'anger,angry,anguished,ant,apple,aquarius,aries,arrow_backward,arrow_double_down,arrow_double_up,arrow_down,' +
         'arrow_down_small,arrow_forward,arrow_heading_down,arrow_heading_up,arrow_left,arrow_lower_left,' +
@@ -121,6 +136,8 @@ export function initializeEmoticonMap() {
 
     return out;
 }
+
+
 
 const emoticonMap = initializeEmoticonMap();
 

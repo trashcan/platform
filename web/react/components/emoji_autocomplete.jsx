@@ -186,10 +186,20 @@ export default class EmojiAutocomplete extends React.Component {
     }
 
     updateSuggestions(mode, filter) {        
-        let suggestions = [];
+        let suggestions = [];  
+        let results = Emoticons.search(filter);
+        
+        for (let i = 0; i < results.length; i++) {
+            let emoticon = results[i];
+            suggestions.push({'key': emoticon,
+                ref: ':' + emoticon + ':',
+                name: ':' + emoticon + ':',
+                href: '/static/images/emoji/' + emoticon + '.png'
+            });      
+        }
          
         // TODO: need an Emoticons.search("prefix"), these are just examples.
-        suggestions.push({'key': 'alien',
+        /*suggestions.push({'key': 'alien',
             ref: ':alien:',
             name: ':alien:',
             href: '/static/images/emoji/alien.png'
@@ -205,7 +215,7 @@ export default class EmojiAutocomplete extends React.Component {
             ref: ':thumbsup:',
             name: ':thumbsup:',
             href: '/static/images/emoji/thumbsup.png'
-        }); 
+        }); */
     
         let selection = this.state.selection;
 
