@@ -1,17 +1,14 @@
 // Copyright (c) 2015 Mattermost, Inc. All Rights Reserved.
 // See License.txt for license information.
 
-import ChannelStore from '../stores/channel_store.jsx';
+
 import Constants from '../utils/constants.jsx';
 const KeyCodes = Constants.KeyCodes;
 const Popover = ReactBootstrap.Popover;
-import UserStore from '../stores/user_store.jsx';
 import * as Utils from '../utils/utils.jsx';
 import * as Emoticons from '../utils/emoticons.jsx';
 
 const patterns = new Map([
-    ['channels', /\b(?:in|channel):\s*(\S*)$/i],
-    ['users', /\bfrom:\s*(\S*)$/i],
     ['emoji', /:(\w+)/i]
 ]);
 
@@ -35,8 +32,6 @@ export default class EmojiAutocomplete extends React.Component {
         this.scrollToItem = this.scrollToItem.bind(this);
         this.updateSuggestions = this.updateSuggestions.bind(this);
 
-        this.renderChannelSuggestion = this.renderChannelSuggestion.bind(this);
-        this.renderUserSuggestion = this.renderUserSuggestion.bind(this);
         this.renderEmojiSuggestion = this.renderEmojiSuggestion.bind(this);
 
         this.state = {
@@ -101,8 +96,6 @@ export default class EmojiAutocomplete extends React.Component {
                 break;
             }
         }
-        console.log("Mode is: " + mode);
-        console.log("filter is" + filter);
 
         if (mode !== this.state.mode || filter !== this.state.filter) {
             this.updateSuggestions(mode, filter);
@@ -157,11 +150,12 @@ export default class EmojiAutocomplete extends React.Component {
 
     getSelection() {
         if (this.state.suggestions.length > 0) {
-            if (this.state.mode === 'channels') {
+        // TODO:
+        /*    if (this.state.mode === 'channels') {
                 return this.state.suggestions[this.state.selection].name;
             } else if (this.state.mode === 'users') {
                 return this.state.suggestions[this.state.selection].username;
-            }
+            }*/
         }
 
         return '';
@@ -191,69 +185,28 @@ export default class EmojiAutocomplete extends React.Component {
         }
     }
 
-    updateSuggestions(mode, filter) {
-        //console.log(Emoticons);
-        //console.log(Emoticons.initializeEmoticonMap() );
-        //console.log(Emoticons.emoticonMap);
-        //console.log(Emoticons.emoticonMap
-        
+    updateSuggestions(mode, filter) {        
         let suggestions = [];
-        console.log("ac: mode is: " + mode);
-        console.log("ac: filter is: " + filter); 
+         
+        // TODO: need an Emoticons.search("prefix"), these are just examples.
+        suggestions.push({'key': 'alien',
+            ref: ':alien:',
+            name: ':alien:',
+            href: '/static/images/emoji/alien.png'
+        }); 
+        
+        suggestions.push({'key': 'ice_cream',
+            ref: 'ice_cream',
+            name: ':ice_cream:',
+            href: '/static/images/emoji/ice_cream.png'
+        });    
 
-
-        if (mode === 'channels') {
-            let channels = ChannelStore.getAll();
-
-            if (filter) {
-                channels = channels.filter((channel) => channel.name.startsWith(filter) && channel.type !== 'D');
-            } else {
-                // don't show direct channels
-                channels = channels.filter((channel) => channel.type !== 'D');
-            }
-
-            channels.sort((a, b) => {
-                // put public channels first and then sort alphabebetically
-                if (a.type === b.type) {
-                    return a.name.localeCompare(b.name);
-                } else if (a.type === Constants.OPEN_CHANNEL) {
-                    return -1;
-                }
-
-                return 1;
-            });
-
-            suggestions = channels;
-        } else if (mode === 'users') {
-            let users = UserStore.getActiveOnlyProfileList();
-
-            if (filter) {
-                users = users.filter((user) => user.username.startsWith(filter));
-            }
-
-            users.sort((a, b) => a.username.localeCompare(b.username));
-
-            suggestions = users;
-        } else if (mode === 'emoji') {
-            suggestions.push({'key': 'alien',
-                ref: ':alien:',
-                name: ':alien:',
-                href: '/static/images/emoji/alien.png'
-            }); 
-            
-            suggestions.push({'key': 'ice_cream',
-                ref: 'ice_cream',
-                name: ':ice_cream:',
-                href: '/static/images/emoji/ice_cream.png'
-            });    
-
-            suggestions.push({'key': 'thumbsup',
-                ref: ':thumbsup:',
-                name: ':thumbsup:',
-                href: '/static/images/emoji/thumbsup.png'
-            }); 
-        }
-
+        suggestions.push({'key': 'thumbsup',
+            ref: ':thumbsup:',
+            name: ':thumbsup:',
+            href: '/static/images/emoji/thumbsup.png'
+        }); 
+    
         let selection = this.state.selection;
 
         // keep the same user/channel selected if it's still visible as a suggestion
@@ -284,47 +237,7 @@ export default class EmojiAutocomplete extends React.Component {
         });
     }
 
-    renderChannelSuggestion(channel) {
-        let className = 'search-autocomplete__item';
-        if (channel.name === this.getSelection()) {
-            className += ' selected';
-        }
-
-        return (
-            <div
-                key={channel.name}
-                ref={channel.name}
-                onClick={this.handleClick.bind(this, channel.name)}
-                className={className}
-            >
-                {channel.name}
-            </div>
-        );
-    }
-
-    renderUserSuggestion(user) {
-        let className = 'search-autocomplete__item';
-        if (user.username === this.getSelection()) {
-            className += ' selected';
-        }
-
-        return (
-            <div
-                key={user.username}
-                ref={user.username}
-                onClick={this.handleClick.bind(this, user.username)}
-                className={className}
-            >
-                <img
-                    className='profile-img rounded'
-                    src={'/api/v1/users/' + user.id + '/image?time=' + user.update_at}
-                />
-                {user.username}
-            </div>
-        );
-    }
-    
-   renderEmojiSuggestion(emoji) {
+    renderEmojiSuggestion(emoji) {
         let className = 'search-autocomplete__item';
         /*if (user.username === this.getSelection()) {
             className += ' selected';
@@ -352,51 +265,18 @@ export default class EmojiAutocomplete extends React.Component {
         }
 
         let suggestions = [];
-
-        if (this.state.mode === 'channels') {
-            const publicChannels = this.state.suggestions.filter((channel) => channel.type === Constants.OPEN_CHANNEL);
-            if (publicChannels.length > 0) {
-                suggestions.push(
-                    <div
-                        key='public-channel-divider'
-                        className='search-autocomplete__divider'
-                    >
-                        <span>{'Public ' + Utils.getChannelTerm(Constants.OPEN_CHANNEL) + 's'}</span>
-                    </div>
-                );
-                suggestions = suggestions.concat(publicChannels.map(this.renderChannelSuggestion));
-            }
-
-            const privateChannels = this.state.suggestions.filter((channel) => channel.type === Constants.PRIVATE_CHANNEL);
-            if (privateChannels.length > 0) {
-                suggestions.push(
-                    <div
-                        key='private-channel-divider'
-                        className='search-autocomplete__divider'
-                    >
-                        <span>{'Private ' + Utils.getChannelTerm(Constants.PRIVATE_CHANNEL) + 's'}</span>
-                    </div>
-                );
-                suggestions = suggestions.concat(privateChannels.map(this.renderChannelSuggestion));
-            }
-        } else if (this.state.mode === 'users') {
-            suggestions = this.state.suggestions.map(this.renderUserSuggestion);
-        } else if (this.state.mode === 'emoji') {
-            console.log(this.state.suggestions);
-            suggestions = this.state.suggestions.map(this.renderEmojiSuggestion);
-        }
-
-        //var $mentionTab = $('#' + this.props.id);
-        //var maxHeight = Math.min(MAX_HEIGHT_LIST, $mentionTab.offset().top - 10);
-        var $postbox = $('#post_textbox');
         
+        console.log(this.state.suggestions);
+        suggestions = this.state.suggestions.map(this.renderEmojiSuggestion);
+       
+        // TODO: this needs some fixing
+        var $postbox = $('#post_textbox');        
         var maxHeight = MAX_HEIGHT_LIST;
         var style = {
             height: Math.min(maxHeight, (suggestions.length * ITEM_HEIGHT) + 4),
             width: $postbox.parent().width(),
-            bottom:  $(window).height() - $postbox.offset().top - ITEM_HEIGHT
-            //bottom: $(window).height() - $mentionTab.offset().top,
-            //left: $mentionTab.offset().left
+            bottom:  $(window).height() - $postbox.offset().top - ITEM_HEIGHT,
+            //left: $postbox.offset().left
         };
         
         return(
@@ -413,18 +293,6 @@ export default class EmojiAutocomplete extends React.Component {
                 </div>
             </div>
           );
-        /*return (
-        
-            <Popover
-                ref='emojiPopover'
-                onShow={this.componentDidMount}
-                id='emoji-autocomplete__popover'
-                className='mentions-box mentions--top autocomplete visible'
-                placement='top'
-            >
-                {suggestions}
-            </Popover>
-        );*/
     }
 }
 
