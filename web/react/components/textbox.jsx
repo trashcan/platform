@@ -61,7 +61,8 @@ export default class Textbox extends React.Component {
         return {message: null};
     }
 
-completeWord(partialWord, word) {
+    completeWord(partialWord, word) {
+        console.log("completeWord: " + partialWord + ", " + word);
         const textbox = ReactDOM.findDOMNode(this.refs.search);
         let text = textbox.value;
 
@@ -82,9 +83,6 @@ completeWord(partialWord, word) {
     componentDidMount() {
         SearchStore.addAddMentionListener(this.onListenerChange);
         ErrorStore.addChangeListener(this.onRecievedError);
-
-        
-
 
         this.resize();
         this.updateMentionTab(null);

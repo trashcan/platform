@@ -32,7 +32,7 @@ export function search(key) {
     let results = [];
     for (let i = 0; i < emoticonNames.length; i++) {
         if (emoticonNames[i].indexOf(key) > -1) {
-            console.log("Found a match:" + emoticonNames[i]);
+            //console.log("Found a match:" + emoticonNames[i]);
             results.push(emoticonNames[i]);
         }
     }

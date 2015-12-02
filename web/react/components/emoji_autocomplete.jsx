@@ -80,7 +80,7 @@ export default class EmojiAutocomplete extends React.Component {
     }
 
     handleInputChange(textbox, text) {
-        console.log("ac: handleInputChange: " + text);
+        //console.log("ac: handleInputChange: " + text);
         const caret = Utils.getCaretPosition(textbox);
         const preText = text.substring(0, caret);
 
@@ -137,6 +137,8 @@ export default class EmojiAutocomplete extends React.Component {
     }
 
     completeWord(value) {
+        console.log("ac: Complete word was called: " + value);
+        
         // add a space so that anything else typed doesn't interfere with the search flag
         this.props.completeWord(this.state.filter, value + ' ');
 
@@ -197,26 +199,7 @@ export default class EmojiAutocomplete extends React.Component {
                 href: '/static/images/emoji/' + emoticon + '.png'
             });      
         }
-         
-        // TODO: need an Emoticons.search("prefix"), these are just examples.
-        /*suggestions.push({'key': 'alien',
-            ref: ':alien:',
-            name: ':alien:',
-            href: '/static/images/emoji/alien.png'
-        }); 
-        
-        suggestions.push({'key': 'ice_cream',
-            ref: 'ice_cream',
-            name: ':ice_cream:',
-            href: '/static/images/emoji/ice_cream.png'
-        });    
-
-        suggestions.push({'key': 'thumbsup',
-            ref: ':thumbsup:',
-            name: ':thumbsup:',
-            href: '/static/images/emoji/thumbsup.png'
-        }); */
-    
+             
         let selection = this.state.selection;
 
         // keep the same user/channel selected if it's still visible as a suggestion
@@ -249,6 +232,7 @@ export default class EmojiAutocomplete extends React.Component {
 
     renderEmojiSuggestion(emoji) {
         let className = 'search-autocomplete__item';
+        
         /*if (user.username === this.getSelection()) {
             className += ' selected';
         }*/
@@ -276,7 +260,7 @@ export default class EmojiAutocomplete extends React.Component {
 
         let suggestions = [];
         
-        console.log(this.state.suggestions);
+        //console.log(this.state.suggestions);
         suggestions = this.state.suggestions.map(this.renderEmojiSuggestion);
        
         // TODO: this needs some fixing
